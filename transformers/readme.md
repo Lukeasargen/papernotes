@@ -1,4 +1,15 @@
 
+## 2018-04 Training Tips for the Transformer Model
+- WIP
+
+## 2020-12 MiniLMv2: Multi-Head Self-Attention Relation Distillation for Compressing Pretrained Transformers
+- "We generalize and simplify deep self-attention distillation in MINILM by introducing multihead self-attention relation distillation, which brings more fine-grained self-attention knowledge and allows more flexibility for the number of student’s attention heads."
+- "Taking query vectors as an example, in order to obtain queries of multiple relation heads, we first concatenate queries of different attention heads and then split the concatenated vector based on the desired number of relation heads. The same operation is also performed on keys and values."
+*This doesn't make any sense to me. Concatenation and splitting will mix the heads in the distillation. Also, their teacher-student pairs still have the same number of attention heads.*
+*For the most part they achieve identical results with half the layers AND half the hidden size (~0.25x # of params and ~2.7x speedip). Impressive and useful.*
+
+**Takeaways**
+- Attention distillation of query, key, and value relations separately. No longer restricted to the same number of attention heads by concatenating and spliting the queries, keys, and values.
 
 ## 2020-02 MiniLM: Deep Self-Attention Distillation for Task-Agnostic Compression of Pre-Trained Transformers
 - [huggingface](https://huggingface.co/microsoft/MiniLM-L12-H384-uncased)
@@ -23,4 +34,4 @@
 
 **Takeaways**
 - BERT based. WordPiece tokenizer. Sum embeddings at input only.
-- Distill last layer only. minimize KL on QK attention maps and value dot product. 
+- Distill last attention layer only. minimize KL on QK attention maps and value dot product. Models must have same number of heads in the last layer.
