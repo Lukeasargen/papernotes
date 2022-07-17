@@ -5,7 +5,9 @@
 ## 2020-12 MiniLMv2: Multi-Head Self-Attention Relation Distillation for Compressing Pretrained Transformers
 - "We generalize and simplify deep self-attention distillation in MINILM by introducing multihead self-attention relation distillation, which brings more fine-grained self-attention knowledge and allows more flexibility for the number of student’s attention heads."
 - "Taking query vectors as an example, in order to obtain queries of multiple relation heads, we first concatenate queries of different attention heads and then split the concatenated vector based on the desired number of relation heads. The same operation is also performed on keys and values."
+
 *This doesn't make any sense to me. Concatenation and splitting will mix the heads in the distillation. Also, their teacher-student pairs still have the same number of attention heads.*
+
 *For the most part they achieve identical results with half the layers AND half the hidden size (~0.25x # of params and ~2.7x speedip). Impressive and useful.*
 
 **Takeaways**
@@ -31,6 +33,9 @@
     - L6, H384, 512 batch, 4e-4 lr
 - LR linear warmup, 4K steps
 - "We have also tried to transfer the relation between hidden states. But we find the performance of student models are unstable for different teacher models."
+- [Example implementation](https://github.com/joanaapa/Distillation-DNABERT-Promoter/blob/f4c983b46448f8cea10bdac0a5c31effafe03ce1/src/transformers/modeling_minilm.py#L262)
+    - Rebuilds the BertModel in huggingface with a new attention layer that outputs the queires, keys, and values
+    - During [loss calculation](https://github.com/joanaapa/Distillation-DNABERT-Promoter/blob/f4c983b46448f8cea10bdac0a5c31effafe03ce1/distiller.py#L461) joanaapa uses nn.KLDivLoss on F.log_softmax. Not sure why, my guess is the log softmax is more stable and has better gradients
 
 **Takeaways**
 - BERT based. WordPiece tokenizer. Sum embeddings at input only.
