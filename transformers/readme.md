@@ -1,6 +1,15 @@
 
 ## 2018-04 Training Tips for the Transformer Model
-- WIP
+- "we use the case-insensitive sacréBLEU which uses a fixed tokenization"
+- "In all cases, we plot the case-insensitive BLEU score against the wall-clock time in hours"
+- word-piece tokenization. "shared source and target (English and Czech) subword vocabulary of size 32k" "average number of subwords per (space-delimited) word is about 1.5"
+- "computation speed decreases with increasing batch size because not all operations in GPU are fully batch-parallelizable"
+![table 2](/figures/2018-04_Training_Tips_for_the_Transformer_Model_Table_2.png)
+- "Prefer the BIG over the BASE model if you plan to train longer than one day" "With less memory you should benchmark BIG and BASE with the maximum possible batch size."
+- "Batch size should be set as high as possible"
+
+**Takeaways**
+- Use a bigger model. Use the largest batch size possible
 
 ## 2020-12 MiniLMv2: Multi-Head Self-Attention Relation Distillation for Compressing Pretrained Transformers
 - "We generalize and simplify deep self-attention distillation in MINILM by introducing multihead self-attention relation distillation, which brings more fine-grained self-attention knowledge and allows more flexibility for the number of student’s attention heads."
