@@ -1,4 +1,38 @@
 
+## 2020-04 Improving Transformer Models by Reordering their Sublayers
+- [paperswithcode](https://paperswithcode.com/paper/improving-transformer-models-by-reordering)
+- Sandwich transformers
+- WIP
+
+## 2020-09 Pay Attention when Required
+- [paperswithcode](https://paperswithcode.com/paper/pay-attention-when-required)
+- Pay Attention when Required Trans former (or PAR Transformer)
+- "We start with the intuition that attention blocks provides context meaning while being comparatively more expensive, and feedforward blocks provide content meaning."
+- search on Transformer-XL
+    1. "self-attention layers are necessary only among the former two-thirds layers of the network"
+    2. "The total number of layers to self-attention layers ratio of p:1 is sufficient, with p=5 being optimal for Transformer-XL"
+- "Sandwich transformers (Press et al., 2020), also keeps an equal number of self-attention and feed forward blocks but are designed using a sandwich coefficien instead of having a simple k interleaved design pattern. They have the firs k sublayers consisting of self-attention, the last sub k layers consisting of feed forward layers with both sandwiched between the classic interleaving pat tern of self-attention and feed forward blocks. This design pattern was found by conducting a series of random search experiments with constraints to keep the number of parameters constant."
+- "identity block, feed forward block and self-attention block" "probability distribution computed by a Gumbel Softmax function" "Since the output at each layer is a linear combination of individual search blocks in that layer, the search cost is linear with respect to the number of blocks in the search space."
+- "search also consists of training only one supernet consisting of all the search blocks"
+- WikiText-103, L32, batch 128
+    - architecture params: lr 1e-2, wd 5e-4
+    - weight params: lr 1e-2, 2d 1e-4
+- freeze architecture params for 10k steps
+    - update architecture params for 20% of epoch for 40k steps
+- stop training at architecture convergence, <75% of blocks don't change
+- From 6 random seeds
+    - ratio of layers:MSA is higher than 2:1. it's around 4:1. models use less MSA
+    - most MSA are in the lower 2/3 of the model, with <1 MSA in the final 1/3
+- PAR design rules
+    1. MSA are placed uniformly in the lower 2/3 of the model
+    2. Choose the number of MSA by the ratio of layers:MSA or p:1, where p>2.
+- Choosen model is L32 p=5
+- Latency is improved becuase the complexity of FFN is lower than MSA, particularly for more token inputs
+
+**Takeaways**
+- Train a "Supernet" for the architecture search. Linear search time for number of architecture components in each stage.
+- MSA is best in the early layers.
+
 ## 2018-04 Training Tips for the Transformer Model
 - "we use the case-insensitive sacréBLEU which uses a fixed tokenization"
 - "In all cases, we plot the case-insensitive BLEU score against the wall-clock time in hours"
@@ -15,8 +49,6 @@
 - "We generalize and simplify deep self-attention distillation in MINILM by introducing multihead self-attention relation distillation, which brings more fine-grained self-attention knowledge and allows more flexibility for the number of student’s attention heads."
 - "Taking query vectors as an example, in order to obtain queries of multiple relation heads, we first concatenate queries of different attention heads and then split the concatenated vector based on the desired number of relation heads. The same operation is also performed on keys and values."
 
-*This doesn't make any sense to me. Concatenation and splitting will mix the heads in the distillation. Also, their teacher-student pairs still have the same number of attention heads.*
-
 *For the most part they achieve identical results with half the layers AND half the hidden size (~0.25x # of params and ~2.7x speedip). Impressive and useful.*
 
 **Takeaways**
@@ -32,11 +64,11 @@
 - 3.1. Self-Attention Distribution Transfer: "we minimize the KL-divergence between the self-attention distributions of ... the attention distributions of the last Transformer layer for the teacher and student"
 - 3.2. Self-Attention Value-Relation Transfer: "scaled dot-product converts vectors of different hidden dimensions into the relation matrices with the same size"
 - 3.3. Teacher Assistant: "For smaller students, we first distill the teacher into a teacher assistant ... the assistant model is then used as the teacher to guide the training of the final student."
-- Teacher: BERT_BASE. L12 E768 12 heads. 109M params
+- Teacher: BERT_BASE. L12 H768 12 heads. 109M params
     - Students need to have 12 attention heads
 - 30522 vocab, 512 max length
 - Adam (0.9, 0.999), 0.1 dropout, weight decay 1e-2
-- Student: 6L 768E, 1024 batch, 5e-4 lr, 400k steps
+- Student: L6 H768, 1024 batch, 5e-4 lr, 400k steps
     - Other students 256 batch, 3e-4 lr
     - L12, H384, Adam (0.9, 0.98), 2048 batch, 6e-4 lr, 400k steps
     - L6, H384, 512 batch, 4e-4 lr
