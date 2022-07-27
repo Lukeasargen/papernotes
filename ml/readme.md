@@ -1,4 +1,9 @@
 
+## 2016-11 Categorical Reparameterization with Gumbel-Softmax
+- [paperswithcode](https://paperswithcode.com/method/gumbel-softmax)
+- WIP
+
+
 ## 2018-09 Adaptive Input Representations for Neural Language Modeling
 - [paperswithcode](https://paperswithcode.com/paper/adaptive-input-representations-for-neural)
 - wikitext-103 18.7 perplexity
