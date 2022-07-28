@@ -1,7 +1,11 @@
 
 ## 2016-11 Categorical Reparameterization with Gumbel-Softmax
 - [paperswithcode](https://paperswithcode.com/method/gumbel-softmax)
-- WIP
+- "We introduce Gumbel-Softmax, a continuous distribution on the simplex that can approximate categorical samples, and whose parameter gradients can be easily computed via the reparameterization trick."
+- "The Gumbel-Softmax distribution interpolates between discrete one-hot-encoded categorical distributions and continuous categorical densities." "Samples from Gumbel-Softmax distributions are identical to samples from a categorical distribution as T->0. At higher temperatures, Gumbel-Softmax samples are no longer one-hot, and become uniform as T->inf."
+- "For learning, there is a tradeoff between small temperatures, where samples are close to one-hot but the variance of the gradients is large, and large temperatures, where samples are smooth but the variance of the gradients is small (Figure 1). In practice, we start at a high temperature and anneal to a small but non-zero temperature."
+- "If T is a learned parameter (rather than annealed via a fixed schedule), this scheme can be interpreted as entropy regularization (Szegedy et al., 2015; Pereyra et al., 2016), where the Gumbel-Softmax distribution can adaptively adjust the “confidence” of proposed samples during the training process."
+- Straight-Through (ST) Gumbel Estimator "we discretize y using argmax but use our continuous approximation in the backward pass by approximating"
 
 
 ## 2018-09 Adaptive Input Representations for Neural Language Modeling
