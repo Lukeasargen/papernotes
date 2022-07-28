@@ -2,7 +2,25 @@
 ## 2019-11 Improving Transformer Models by Reordering their Sublayers
 - [paperswithcode](https://paperswithcode.com/paper/improving-transformer-models-by-reordering)
 - Sandwich transformers
-- WIP
+- "Could ordering the sublayers in a different pattern lead to better performance?"
+- "interleaving pattern of self-attention and feedforward sublayers (sfsfsf...)" "there is no reason to expect this particular pattern to be optimal"
+- WikiText-103 word-level
+- "First, we generate random transformer models while keeping the number of parameters constant." "a third of our random models outperformed the average baseline suggests that a better ordering than interleaving probably exists"
+- L16, 16 heads, d=1024 hidden, ffn 4096
+    - param counts. msa=4d^2. ffn=8d^2. ffn has 2x msa params
+- "we generate 20 unbalanced transformer models by randomly selecting one sublayer at a time (either s or f with equal probability) until the parameter budget is exhausted."
+    - "We do not observe any preference for more sublayers of one type over the other"
+    - "we conclude that a balanced number of self-attention and feedforward sublayers seems to be a desirable property, though not a necessary one"
+- "models that outperform the average baseline tend to have more self-attention s in the first (bottom) half of the network and more f in the second (top) half"
+- Sandwich transformers
+    - 2n sublayers in total (n of each type)
+    - first k sublayers are purely self-attention
+    - last k are feedforward sublayers
+    - original interleaving pattern (sf) to fill the remaining 2(n-k) sublayers
+    - "We refer to k as the transformer’s sandwich coefficient."
+![figure 5](/figures/2019-11_Improving_Transformer_Models_by_Reordering_their_Sublayers_Figure_5.png)
+- "This experiment indicates that a reordering pattern that benefits one particular task (language modeling) might not carry the same performance gains to another (machine translation). However, it also demonstrates the general robustness of transformer architectures to sublayer reordering"
+
 
 ## 2020-09 Pay Attention when Required
 - [paperswithcode](https://paperswithcode.com/paper/pay-attention-when-required)
