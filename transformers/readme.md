@@ -1,3 +1,51 @@
+## 2016-10 BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding
+- [paperswithcode](https://paperswithcode.com/paper/bert-pre-training-of-deep-bidirectional)
+- WIP
+
+**Takeaways**
+
+## 2019-01 Transformer-XL Attentive Language Models Beyond a Fixed-Length Context
+- [paperswithcode](https://paperswithcode.com/paper/transformer-xl-attentive-language-models)
+- "the model cannot capture any longer-term dependency beyond the predefined context length. In addition, the fixed-length segments are created by selecting a consecutive chunk of symbols without respecting the sentence or any other semantic boundary. Hence, the model lacks necessary contextual information needed to well predict the first few symbols, leading to inefficient optimization and inferior performance. We refer to this problem as context fragmentation."
+- "we reuse the hidden states obtained in previous segments. The reused hidden states serve as memory for the current segment, which builds up a recurrent connection between the segments."
+- weight tied output layer
+- "the hidden state sequence computed for the previous segment is fixed and cached to be reused as an extended context when the model processes the next new segment"
+- "With this recurrence mechanism applied to every two consecutive segments of a corpus, it essentially creates a segment-level recurrence in the hidden states. As a result, the effective context being utilized can go way beyond just two segments"
+- "instead of incorporating bias statically into the initial embedding, one can inject the same information into the attention score of each layer."
+- "it suffices to know the relative distance between each key vector kj and itself qi, i.e. i-j."
+- "our relative positional embedding R adapts the sinusoid bias, a model trained on a memory of some certain length can automatically generalize to a memory several times longer during evaluation"
+- [Author implementation](https://github.com/kimiyoung/transformer-xl)
+- Pytorch https://github.com/sooftware/conformer/blob/main/conformer/attention.py#L26
+- Pytorch https://github.com/oshindow/Transformer-Transducer/blob/master/tt/transformer/attention.py#L121
+
+**Takeaways**
+- Cache previous hidden states/memory; adds RNN like structure to the model. Memory length can be extended during evaluation.
+- Relative positions encodings. Reparametrize so that the QK relations are separated into content and position biases. Use sinusoid relative embeddings to extend context beyond training length.
+
+**Questions**
+- Why cache the whole context? Model should decide what to keep.
+
+## 2019-05 Adaptive Attention Span in Transformers
+- [paperswithcode](https://paperswithcode.com/paper/adaptive-attention-span-in-transformers)
+- relative position embeddings. added to the keys
+- "for each input token, each attention head scales linearly in memory and time in the context size, or attention span"
+- "Each attention head of a Transformer shares the same attention span S. This assumes that every head requires the same span to form its representation."
+- "add a masking function to control for the span of the attention" "parametrized by a real value in z [0, S]" "add a l1 penalization on the parameters z"
+- 8 heads, ReLU, all heads share the same learned position embeddings
+    - small: L12 H512, ffn 2048 dropout 0.3, 600k steps (900k for S=8192)
+    - large: L24 H768, ffn 4096 dropout 0.4, (250k text8, 150k enwik8), 20k steps with lr/10
+- dynamic span starts with -4 bias to make intial spans small
+- $\lambda$=2e-6, R=32
+    - reduced to $\lambda$=0.5e-6 for S=8192 "because z was not growing longer than 4000"
+- adagrad, btach64, fixed lr 0.07, 32k linear warmup steps, value clip 0.03, 512 training context
+- "Interestingly, even with a limit on span sets to 8192, the average span is only 314."
+- "We can see that the lowest 5 layers have the smallest possible attention span, which is R = 32 of the masking function." "Although there is a general tendency of higher layers having longer attention spans, it is not a simple monotonic function of the layer height."
+- [Author implementation in pytorch](https://github.com/facebookresearch/adaptive-span)
+- https://github.com/prajjwal1/fluence/blob/master/fluence/adaptive/span.py
+
+**Takeaways**
+- Learning the attention span does not degrade performance.
+- Reduce memory and compute costs.
 
 ## 2019-11 Improving Transformer Models by Reordering their Sublayers
 - [paperswithcode](https://paperswithcode.com/paper/improving-transformer-models-by-reordering)
@@ -20,7 +68,11 @@
     - "We refer to k as the transformer’s sandwich coefficient."
 ![figure 5](/figures/2019-11_Improving_Transformer_Models_by_Reordering_their_Sublayers_Figure_5.png)
 - "This experiment indicates that a reordering pattern that benefits one particular task (language modeling) might not carry the same performance gains to another (machine translation). However, it also demonstrates the general robustness of transformer architectures to sublayer reordering"
+- [Author implementation in pytorch](https://github.com/ofirpress/sandwich_transformer)
+    - adaptive span: only trim the keys and values because you need queries for every token. chunk the trim into 64 token sizes to help with memory management
 
+**Takeaways**
+- The search did not favor MSA or FFN over the other. Use MSA first and FFN later.
 
 ## 2020-09 Pay Attention when Required
 - [paperswithcode](https://paperswithcode.com/paper/pay-attention-when-required)
@@ -32,6 +84,7 @@
 - "Sandwich transformers (Press et al., 2020), also keeps an equal number of self-attention and feed forward blocks but are designed using a sandwich coefficien instead of having a simple k interleaved design pattern. They have the firs k sublayers consisting of self-attention, the last sub k layers consisting of feed forward layers with both sandwiched between the classic interleaving pat tern of self-attention and feed forward blocks. This design pattern was found by conducting a series of random search experiments with constraints to keep the number of parameters constant."
 - "identity block, feed forward block and self-attention block" "probability distribution computed by a Gumbel Softmax function" "Since the output at each layer is a linear combination of individual search blocks in that layer, the search cost is linear with respect to the number of blocks in the search space."
 - "search also consists of training only one supernet consisting of all the search blocks"
+![figure 1](/figures/2020-09_Pay_Attention_when_Required_Figure_1.png)
 - WikiText-103, L32, batch 128
     - architecture params: lr 1e-2, wd 5e-4
     - weight params: lr 1e-2, 2d 1e-4
@@ -46,10 +99,17 @@
     2. Choose the number of MSA by the ratio of layers:MSA or p:1, where p>2.
 - Choosen model is L32 p=5
 - Latency is improved becuase the complexity of FFN is lower than MSA, particularly for more token inputs
+- [Example implementation in tf](https://github.com/Jmkernes/PAR-Transformer-XL/blob/main/par_model.py#L171)
+    - Create a stochastic block that stores the weight of each branch
+    - Use the Gumbel-Softmax to train the architecture weights. I'm pretty sure you just accumulate the gradients for a bunch of batches
+    - [GIF by Jmkernes](https://raw.githubusercontent.com/jmkernes/PAR-Transformer-XL/main/movie.gif) shows how the branch weights update during training
 
 **Takeaways**
 - Train a "Supernet" for the architecture search. Linear search time for number of architecture components in each stage.
 - MSA is best in the early layers.
+
+**Questions**
+- What other branches can be used? fourier transform maybe have useful interactions with sinusoidal position embeddings
 
 ## 2018-04 Training Tips for the Transformer Model
 - "we use the case-insensitive sacréBLEU which uses a fixed tokenization"
@@ -70,7 +130,8 @@
 *For the most part they achieve identical results with half the layers AND half the hidden size (~0.25x # of params and ~2.7x speedip). Impressive and useful.*
 
 **Takeaways**
-- Attention distillation of query, key, and value relations separately. No longer restricted to the same number of attention heads by concatenating and spliting the queries, keys, and values.
+- Distill the Q-Q, K-K, V-V relations of only ONE teacher layer into the last layer of a student model.
+- Concatenate the QKV projections and split into multiple relation heads. Calculate the scaled dot product. Use the KL loss.
 
 ## 2020-02 MiniLM: Deep Self-Attention Distillation for Task-Agnostic Compression of Pre-Trained Transformers
 - [huggingface](https://huggingface.co/microsoft/MiniLM-L12-H384-uncased)
@@ -92,10 +153,14 @@
     - L6, H384, 512 batch, 4e-4 lr
 - LR linear warmup, 4K steps
 - "We have also tried to transfer the relation between hidden states. But we find the performance of student models are unstable for different teacher models."
-- [Example implementation](https://github.com/joanaapa/Distillation-DNABERT-Promoter/blob/f4c983b46448f8cea10bdac0a5c31effafe03ce1/src/transformers/modeling_minilm.py#L262)
+- [Example implementation in pytorch](https://github.com/joanaapa/Distillation-DNABERT-Promoter/blob/f4c983b46448f8cea10bdac0a5c31effafe03ce1/src/transformers/modeling_minilm.py#L262)
     - Rebuilds the BertModel in huggingface with a new attention layer that outputs the queires, keys, and values
     - During [loss calculation](https://github.com/joanaapa/Distillation-DNABERT-Promoter/blob/f4c983b46448f8cea10bdac0a5c31effafe03ce1/distiller.py#L461) joanaapa uses nn.KLDivLoss on F.log_softmax. Not sure why, my guess is the log softmax is more stable and has better gradients
 
 **Takeaways**
 - BERT based. WordPiece tokenizer. Sum embeddings at input only.
 - Distill last attention layer only. minimize KL on QK attention maps and value dot product. Models must have same number of heads in the last layer.
+
+**Questions**
+- Does this work for masked attention in decoders?
+- Is there an equivalent cross-attention relation?
