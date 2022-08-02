@@ -1,8 +1,29 @@
-## 2016-10 BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding
-- [paperswithcode](https://paperswithcode.com/paper/bert-pre-training-of-deep-bidirectional)
+
+
+## 2019-09 Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism
 - WIP
 
+
+## 2016-10 BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding
+- [paperswithcode](https://paperswithcode.com/paper/bert-pre-training-of-deep-bidirectional)
+- BERT: Bidirectional Encoder Representations from Transformers
+- "bidirectional representations from unlabeled text by jointly conditioning on both left and right context in all layers"
+- BERTBASE (L=12, H=768, A=12, Total Parameters=110M)
+    - Same size as GPT1
+- BERTLARGE (L=24, H=1024, A=16, Total Parameters=340M)
+- WordPiece embeddings, 30,000 vocab
+- Append [CLS] token to the begining of a sequence. Use [SEP] token between sentences. Add different sentence embeddings for sentence A and B. Add embeddings to input token
+- Pre training
+    - MLM: "simply mask some percentage of the input tokens at random, and then predict those masked tokens. We refer to this procedure as a “masked LM” (MLM)" "mask 15% of all WordPiece tokens in each sequence at random" "mismatch between pre-training and fine-tuning, since the [MASK] token does not appear during fine-tuning" "we replace the i-th token with (1) the [MASK] token 80% of the time (2) a random token 10% of the time (3) the unchanged i-th token 10% of the time"
+    - NSP: "when choosing the sentences A and B for each pretraining example, 50% of the time B is the actual next sentence that follows A (labeled as IsNext), and 50% of the time it is a random sentence from the corpus (labeled as NotNext)"
+- batch 256, length 512, 1M steps, Adam (0.9, 0.999), lr 1e-4, wd 1e-2, linear warmup 10k steps, dopout 0.1 all layers, gelu
+-"To speed up pretraing in our experiments, we pre-train the model with sequence length of 128 for 90% of the steps. Then, we train the rest 10% of the steps of sequence of 512 to learn the positional embeddings."
+
 **Takeaways**
+- Bidirectional context is key for certain tasks. Masked Language Model (MLM) for pre-training. Then you finetune to perform many tasks.
+
+**Questions**
+- MLM schedule could improve training. Would progressively increasing the percentage of hidden tokens improve representations?
 
 ## 2019-01 Transformer-XL Attentive Language Models Beyond a Fixed-Length Context
 - [paperswithcode](https://paperswithcode.com/paper/transformer-xl-attentive-language-models)
