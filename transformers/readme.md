@@ -1,8 +1,33 @@
+## 2019-09 Reducing Transformer Depth on Demand with Structured Dropout
+- [paperswithcode](https://paperswithcode.com/paper/reducing-transformer-depth-on-demand-with-1)
+- "dropping layers during training can regularize and reduce the training time of very deep convolutional networks. In contrast, we focus on pruning"
+- "we take advantage of the plasticity of neural networks to learn models that are resilient to random pruning, rather than learning the pruning itself"
+- "In practice, we observe that networks are more robust to pruning than their expected ratio but higher pruning rates leads to better performance for smaller models."
+- "We use a LayerDrop rate of p = 0.2 for all our experiments, but we recommend p = 0.5 to target very small inference time models."
+- "Very deep Transformers are typically hard to train because of instability and memory usage, and they are prone to overfitting on a small dataset like Wikitext-103. LayerDrop regularizes the network, reduces the memory usage, and increases training stability as fewer layers are active at each forward pass."
+- "We observe no large differences between dropping sub-layers and layers, possibly because we are working with relatively shallow networks. In theory, dropping sub-layers should perform better and we expect this to be the case with very deep Transformers."
+- "the straight-forward strategy of selecting every other layer, is tough to beat. We find only marginal improvement can be gained by searching over the validation set for the best set of 8 layers to use and by learning which layers to drop."
+- "The input and output layers of a network are the most important, as they process the input and project to the output vocabulary."
 
+- https://github.com/facebookresearch/fairseq/blob/main/fairseq/modules/layer_drop.py
+    - Keep all the model blocks in a nn.ModuleList and overload the __iter__ attribute to only yield p percent of the blocks
+
+**Takeaways**
+- Use LayerDrop if you intend to do layerwise structured pruning.
 
 ## 2019-09 Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism
-- WIP
+- Model parallel for the FFN along the columns of the weight. Does not require communication with the other columns since each is independent.
+- Model parallel for the MSA along the head axis. Output layer is parallel along the rows.
+- filter documents less than 128 tokens, use LSH to deduplicate jaccard >0.7
+- init normal [0, 0.02], scale layers per residuals by 1/sqrt(2N) for N total layers
+- Adam, wd 0.01, clip norm 1.0, dropout 0.1, activation checkpointing
+- GPT-2: 50257 BPE vocab, context 1024, batch 512, 300k steps, lr 1.5e-4, linear warmup 3k steps, single cycle cosine decay, min lr 1e-5
+- BERT: 30522 word-piece vocab, batch 1024, lr 1e-4, linear warmup 10k steps, 2M steps
+- "hidden size per attention head is kept constant at 96"
 
+**Takeaways**
+- "model parallelism with only a few modifications"
+- "careful attention to the placement of layer normalization in BERT-like models is critical to achieving increased accuracies as the model size increases"
 
 ## 2016-10 BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding
 - [paperswithcode](https://paperswithcode.com/paper/bert-pre-training-of-deep-bidirectional)
@@ -87,6 +112,7 @@
     - last k are feedforward sublayers
     - original interleaving pattern (sf) to fill the remaining 2(n-k) sublayers
     - "We refer to k as the transformer’s sandwich coefficient."
+
 ![figure 5](/figures/2019-11_Improving_Transformer_Models_by_Reordering_their_Sublayers_Figure_5.png)
 - "This experiment indicates that a reordering pattern that benefits one particular task (language modeling) might not carry the same performance gains to another (machine translation). However, it also demonstrates the general robustness of transformer architectures to sublayer reordering"
 - [Author implementation in pytorch](https://github.com/ofirpress/sandwich_transformer)
