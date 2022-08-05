@@ -1,3 +1,18 @@
+## 2019-08 Adaptively Sparse Transformers
+- "The softmax mapping (Equation 2) is elementwise proportional to exp, therefore it can never assign a weight of exactly zero. Thus, unnecessary items are still taken into consideration to some extent. Since its output sums to one, this invariably means less weight is assigned to the relevant items, potentially harming performance and interpretability"
+- "We focus on a recently-introduced flexible family of transformations, $\alpha$-entmax"
+- "The end-to-end computational overhead of our methods, when compared to standard softmax, is relatively small; in training tokens per second, the models using $\alpha$-entmax and 1.5-entmax are, respectively, 75% and 90% the speed of the softmax model."
+- BPE, 32k vocab
+- L6, 8 heads, batch 8192, linear warmup 20k steps, inverse square root decay
+- [Author implementation](https://github.com/deep-spin/entmax)
+
+**Takeaways**
+- Softmax can't output zero. Create a softmax with learnable sparsity. Less throughput from computational overhead.
+- This work is focused on showing the mechanisms can work. The only metrics reported are in Table 1 and there is no discernible advantage to this method.
+
+**Questions**
+- Sparsity is logical for the way humans work, but these are computers. How does sparsity affect the queries, keys, and values? Having sparse attention maps doesn't work if the qkv architecture breaks.
+
 ## 2019-09 Reducing Transformer Depth on Demand with Structured Dropout
 - [paperswithcode](https://paperswithcode.com/paper/reducing-transformer-depth-on-demand-with-1)
 - "dropping layers during training can regularize and reduce the training time of very deep convolutional networks. In contrast, we focus on pruning"
@@ -8,9 +23,8 @@
 - "We observe no large differences between dropping sub-layers and layers, possibly because we are working with relatively shallow networks. In theory, dropping sub-layers should perform better and we expect this to be the case with very deep Transformers."
 - "the straight-forward strategy of selecting every other layer, is tough to beat. We find only marginal improvement can be gained by searching over the validation set for the best set of 8 layers to use and by learning which layers to drop."
 - "The input and output layers of a network are the most important, as they process the input and project to the output vocabulary."
-
 - https://github.com/facebookresearch/fairseq/blob/main/fairseq/modules/layer_drop.py
-    - Keep all the model blocks in a nn.ModuleList and overload the __iter__ attribute to only yield p percent of the blocks
+    - Keep all the model blocks in a nn.ModuleList and overload the __ iter __ attribute to only yield p percent of the blocks
 
 **Takeaways**
 - Use LayerDrop if you intend to do layerwise structured pruning.
