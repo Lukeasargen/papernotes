@@ -1,3 +1,10 @@
+| Paper | Model | Takeaways |
+| :--- | :----: | :--- |
+| 2017-01 Wasserstein GAN | WGAN | Earth-Mover (EM) distance or Wasserstein-1. discriminator=critic. critic outputs linear value. gradients are better, but lipschitz continuous is a requirement. clamp the weights into a 0.01 box. don't use an optimizer with momentum. |
+| 2017-03 Improved Training of Wasserstein GANs| WGAN-GP | two-sided gradient norm penalty to enforce 1-Lipschtiz in the critic. optimizer with momentum works |
+| 2016-05 Photo-Realistic Single Image Super-Resolution Using a Generative Adversarial Network | SRGAN | augment MSE loss (content) with GAN loss. balancing these losses is still an issue |
+| 2016-05 Generative Adversarial Text to Image Synthesis | |supervised pretraining of text encoder. not required, stills works end-to-end. use pretrained conv features. loss is a similarity between pairs of image-text for the encoders/classifiers. concatenate text features to noise in G and spatial features in D. add loss to D to learn both real/fake and image-text matching. interpolations in the text embeddings |
+
 ## 2016-05 Generative Adversarial Text to Image Synthesis
 - "we aim to learn a mapping directly from words and characters to image pixels"
 - "By conditioning both generator and discriminator on side information, we can naturally model this phenomenon since the discriminator network acts as a “smart” adaptive loss function."
@@ -19,7 +26,7 @@
 
 **Takeaways**
 - supervised pretraining of text encoder. not required, stills works end-to-end. use pretrained conv features. loss is a similarity between pairs of image-text for the encoders/classifiers
-- concatenate text features to noise in G and saptial features in D. add loss to D to learn both real/fake and image-text matching.
+- concatenate text features to noise in G and spatial features in D. add loss to D to learn both real/fake and image-text matching.
 - interpolations in the text embeddings
 
 ## 2016-05 Photo-Realistic Single Image Super-Resolution Using a Generative Adversarial Network
@@ -74,4 +81,4 @@
 - "When the critic is trained to completion, it simply provides a loss to the generator that we can train as any other neural network. This tells us that we no longer need to balance generator and discriminator's capacity properly. The better the critic, the higher quality the gradients we use to train the generator."
 
 **Takeaways**
-- discriminator=critic. critic outputs linear value. gradients are better, but lipschitz continuous is a requirement. clamp the weights into a 0.01 box. don't use an optimizer with momentum.
+- Earth-Mover (EM) distance or Wasserstein-1. discriminator=critic. critic outputs linear value. gradients are better, but lipschitz continuous is a requirement. clamp the weights into a 0.01 box. don't use an optimizer with momentum.
