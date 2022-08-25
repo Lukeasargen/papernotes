@@ -1,3 +1,27 @@
+## 2016-05 Generative Adversarial Text to Image Synthesis
+- "we aim to learn a mapping directly from words and characters to image pixels"
+- "By conditioning both generator and discriminator on side information, we can naturally model this phenomenon since the discriminator network acts as a “smart” adaptive loss function."
+- "character-level text encoder and class-conditional GAN"
+- "The intuition here is that a text encoding should have a higher compatibility score with images of the correspondong class compared to any other class and vice-versa." "The resulting gradients are backpropagated through $\varphi$ to learn a discriminative text encoder."
+- "for full generality and robustness to typos and large vocabulary, in this work we always used a hybrid characterlevel convolutional-recurrent network"
+- generator G - sample noise prior, encode text query, affine to 128-dim, LeakyReLU, concatenate to noise vector
+- discriminator D - separate afine to 128-dim, LeakyReLU, broadcast to 4x4 spatial dim and concatenate features, 1x1 conv, LeakyReLU, 4x4 conv produces the final score
+
+![figure 2](/figures/2016-05_Generative_Adversarial_Text_to_Image_Synthesis_Figure_2.png)
+- "In addition to the real / fake inputs to the discriminator during training, we add a third type of input consisting of real images with mismatched text, which the discriminator must learn to score as fake. By learning to optimize image / text matching in addition to the image realism, the discriminator can provide an additional signal to the generator."
+- "we can generate a large amount of additional text embeddings by simply interpolating between embeddings of training set captions" "Because the interpolated embeddings are synthetic, the discriminator D does not have “real” corresponding image and text pairs to train on. However, D learns to predict whether image and text pairs match or not. Thus, if does a good job at this, then by satisfying D on interpolated text embeddings G can learn to fill in gaps on the data manifold in between training points."
+- "For text features, we first pre-train a deep convolutional recurrent text encoder on structured joint embedding of text captions with 1,024-dimensional GoogLeNet image embedings" "pre-training the text encoder is not a requirement of our method and we include some end-to-end results in the supplement." "The reason for pre-training the text encoder was to increase the speed of training the other components for faster experimentation."
+- Adam, lr 2-4, beta1=0.5, batch 64, 600 epochs
+- "The basic GAN tends to have the most variety in flower morphology,while other methods tend to generate more class-consistent images."
+
+![figure 2](/figures/2016-05_Generative_Adversarial_Text_to_Image_Synthesis_Figure_8.png)
+- "A common property of all the results is the sharpness of the samples, similar to other GAN-based image synthesis models. We also observe di versity in the samples by simply drawing multiple noise vectors and using the same fixed text encoding."
+
+**Takeaways**
+- supervised pretraining of text encoder. not required, stills works end-to-end. use pretrained conv features. loss is a similarity between pairs of image-text for the encoders/classifiers
+- concatenate text features to noise in G and saptial features in D. add loss to D to learn both real/fake and image-text matching.
+- interpolations in the text embeddings
+
 ## 2016-05 Photo-Realistic Single Image Super-Resolution Using a Generative Adversarial Network
 - "the ability of MSE (and PSNR) to capture perceptually relevant differences, such as high texture detail, is very limited as they are defined based on pixel-wise image differences"
 - "single image super-resolution (SISR)"
@@ -44,6 +68,7 @@
 - f_w is called the critic
 - "In order to have parameters w lie in a compact space, something simple we can do is clamp the weights to a fixed box (say W = [-0.01, 0.01]) after each gradient update." "Weight clipping is a clearly terrible way to enforce a Lipschitz constraint." "we stuck with weight clipping due to its simplicity and already good performance"
 - **"The critic, however, can't saturate, and converges to a linear function that gives remarkably clean gradients everywhere.** The fact that we constrain the weights limits the possible growth of the function to be at most linear in different parts of the space, forcing the optimal critic to have this behaviour."
+
 ![figure 5](/figures/2017-01_Wasserstein_GAN_Figure_2.png)
 - "training becomes unstable at times when one uses a momentum based optimizer such as Adam" "the loss for the critic is nonstationary, momentum based methods seemed to perform worse."
 - "When the critic is trained to completion, it simply provides a loss to the generator that we can train as any other neural network. This tells us that we no longer need to balance generator and discriminator's capacity properly. The better the critic, the higher quality the gradients we use to train the generator."
