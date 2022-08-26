@@ -4,6 +4,25 @@
 | 2017-03 Improved Training of Wasserstein GANs| WGAN-GP | two-sided gradient norm penalty to enforce 1-Lipschtiz in the critic. optimizer with momentum works |
 | 2016-05 Photo-Realistic Single Image Super-Resolution Using a Generative Adversarial Network | SRGAN | augment MSE loss (content) with GAN loss. balancing these losses is still an issue |
 | 2016-05 Generative Adversarial Text to Image Synthesis | |supervised pretraining of text encoder. not required, stills works end-to-end. use pretrained conv features. loss is a similarity between pairs of image-text for the encoders/classifiers. concatenate text features to noise in G and spatial features in D. add loss to D to learn both real/fake and image-text matching. interpolations in the text embeddings |
+| 2016-06 Improved Techniques for Training GANs | | feature matching. minibatch discrimination. historical averaging. one-sided label smoothing, "smooth only the positive labels to $\alpha$." virtual batch normalization. semi-supervised learning by adding a "generated" prediction to a classifier. weight normalization in D. add Gaussian noise to activations in D. |
+
+## 2016-06 Improved Techniques for Training GANs
+- Nash equilibrium. Loss is a minimum of both the generator and discriminator.
+- feature matching. "we train the generator to match the expected value of the features on an intermediate layer of the discriminator"
+- minibatch discrimination. "modelling the closeness between examples in a minibatch"
+- historical averaging. modify the cost with L2 distance with previous parameters
+- one-sided label smoothing. "replaces the 0 and 1 targets for a classifier with smoothed values, like .9 or .1" "smooth only the positive labels to $\alpha$, leaving negative labels set to 0."
+- virtual batch normalization. "Batch normalization ... causes the output of a neural network for an input example x to be highly dependent on several other inputs x' in the same minibatch" "each example x is normalized based on the statistics collected on a reference batch of examples that are chosen once and fixed at the start of training, and on x itself"
+- inception score. "important to evaluate the metric on a large enough number of samples (i.e. 50k) as part of this metric measures diversity." _so the metric is dependent on number of samples. you can compare inception score if the number of samples is the same_
+- "We can do semi-supervised learning with any standard classifier by simply adding samples from the GAN generator G to our data set, labeling them with a new “generated” class"
+    - $L_{supervised}$ (the negative log probability of the label, given that the data is real)
+    - $L_{unsupervised}$ which is in fact the standard GAN game-value
+    - classes+1 outputs is over-parameterized. "standard supervised loss function of our original classifier with K classes, and our discriminator D is given by $ D(x) = \frac{Z(x)}{Z(x)+1}$, where $Z(x) = \Sigma_{k=1}^{K} exp[l_k(x)]$ ."
+- "By having the discriminator classify the object shown in the image, we bias it to D develop an internal representation that puts emphasis on the same features humans emphasize." _sources?_
+- "We use weight normalization [20] and add Gaussian noise to the output of each layer of the discriminator."
+
+**Takeaways**
+- feature matching. minibatch discrimination. historical averaging. one-sided label smoothing, "smooth only the positive labels to $\alpha$." virtual batch normalization. semi-supervised learning by adding a "generated" prediction to a classifier. weight normalization in D. add Gaussian noise to activations in D.
 
 ## 2016-05 Generative Adversarial Text to Image Synthesis
 - "we aim to learn a mapping directly from words and characters to image pixels"
