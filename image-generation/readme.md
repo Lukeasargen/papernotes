@@ -1,10 +1,30 @@
 | Paper | Model | Takeaways |
 | :--- | :----: | :--- |
-| 2017-01 Wasserstein GAN | WGAN | Earth-Mover (EM) distance or Wasserstein-1. discriminator=critic. critic outputs linear value. gradients are better, but lipschitz continuous is a requirement. clamp the weights into a 0.01 box. don't use an optimizer with momentum. |
-| 2017-03 Improved Training of Wasserstein GANs| WGAN-GP | two-sided gradient norm penalty to enforce 1-Lipschtiz in the critic. optimizer with momentum works |
-| 2016-05 Photo-Realistic Single Image Super-Resolution Using a Generative Adversarial Network | SRGAN | augment MSE loss (content) with GAN loss. balancing these losses is still an issue |
-| 2016-05 Generative Adversarial Text to Image Synthesis | |supervised pretraining of text encoder. not required, stills works end-to-end. use pretrained conv features. loss is a similarity between pairs of image-text for the encoders/classifiers. concatenate text features to noise in G and spatial features in D. add loss to D to learn both real/fake and image-text matching. interpolations in the text embeddings |
+| 2016-09 Real-Time Single Image and Video Super-Resolution Using an Efficient Sub-Pixel Convolutional Neural Network | ESPCN | MSE loss. perform convolution in LR. periodic shuffliing operator as the last layer. | 
 | 2016-06 Improved Techniques for Training GANs | | feature matching. minibatch discrimination. historical averaging. one-sided label smoothing, "smooth only the positive labels to $\alpha$." virtual batch normalization. semi-supervised learning by adding a "generated" prediction to a classifier. weight normalization in D. add Gaussian noise to activations in D. |
+| 2016-05 Generative Adversarial Text to Image Synthesis | |supervised pretraining of text encoder. not required, stills works end-to-end. use pretrained conv features. loss is a similarity between pairs of image-text for the encoders/classifiers. concatenate text features to noise in G and spatial features in D. add loss to D to learn both real/fake and image-text matching. interpolations in the text embeddings |
+| 2016-05 Photo-Realistic Single Image Super-Resolution Using a Generative Adversarial Network | SRGAN | augment MSE loss (content) with GAN loss. balancing these losses is still an issue |
+| 2017-03 Improved Training of Wasserstein GANs| WGAN-GP | two-sided gradient norm penalty to enforce 1-Lipschtiz in the critic. optimizer with momentum works |
+| 2017-01 Wasserstein GAN | WGAN | Earth-Mover (EM) distance or Wasserstein-1. discriminator=critic. critic outputs linear value. gradients are better, but lipschitz continuous is a requirement. clamp the weights into a 0.01 box. don't use an optimizer with momentum. |
+
+## 2016-09 Real-Time Single Image and Video Super-Resolution Using an Efficient Sub-Pixel Convolutional Neural Network
+- "It is a highly ill-posed problem, due to the loss of high-frequency information that occurs during the non-invertible low-pass filtering and subsampling operations."
+- "increasing the resolution of the LR images before the image enhancement step increases the computational complexity"
+- "interpolation methods typically used to accomplish the task, such as bicubic interpolation [7, 44, 3], do not bring additional information to solve the ill-posed reconstruction problem."
+- "there are no efficient implementations of a convolution layer whose output size is larger than the input size"
+- "we propose to increase the resolution from LR to HR only at the very end of the network and super-resolve HR data from LR feature maps"
+- "This means each LR image is directly fed to the network and feature extraction occurs through nonlinear convolutions in LR space. Due to the reduced input resolution, we can effectively use a smaller filter size to integrate the same information while maintaining a given contextual area."
+- "For a network with $L$ layers, we learn $n_{L-1}$ upscaling filters for the $n_{L-1}$ feature maps as opposed to one upscaling filter for the input image."
+- "PS is an periodic shuffling operator that rearranges the elements of a $H \times W \times C \cdot r^2$ tensor to a tensor of shape $rH \times rW \times C$."
+- "we do not apply nonlinearity to the outputs of the convolution at the last layer"
+- **efficient sub-pixel convolutional neural network (ESPCN)**
+- "last layer produces a HR image from LR feature maps directly with one upscaling filter for each feature map"
+- "pixel-wise mean squared error (MSE) of the reconstruction as an objective function"
+- "tanh instead of relu as the activation function for the final model motivated by our experimental results"
+
+**Takeaways**
+- perform convolution in LR
+- periodic shuffliing operator as the last layer
 
 ## 2016-06 Improved Techniques for Training GANs
 - Nash equilibrium. Loss is a minimum of both the generator and discriminator.
