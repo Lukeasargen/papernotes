@@ -1,3 +1,24 @@
+| Paper | Takeaways |
+| :--- | :--- |
+| 2019-07 Positional Normalization | Positional Normalization (PONO) and Moment Shortcut (MS). Normalize positions and inject the mean and stand deviation back into the network. |
+| 2016-11 Categorical Reparameterization with Gumbel-Softmax | Straight-Through (ST) Gumbel Estimator "we discretize y using argmax but use our continuous approximation in the backward pass by approximating" |
+| 2018-09 Adaptive Input Representations for Neural Language Modeling | BPE is poor for the perplexity at the word level, no comment on token perplexity. adaptive softmax tied is the best, don't tie the projections in the head or tail. added dropout after the projection the tail, to the head, better for small datasets. reduce the capacity of the embeddings for small datasets |
+| 2017-06 Efficient softmax approximation for GPUs | adaptive softmax = less parameters, less memory, slightly better perplexity |
+
+## 2019-07 Positional Normalization
+- "Instead of disregarding the normalization constants, we propose to re-inject them into later layers to preserve or transfer structural information in generative networks."
+"all aforementioned normalization schemes follow a common
+theme: they normalize across spatial dimensions and discard the extracted statistics. The philosophy behind their design is that the first two moments are considered expendable and should be removed."
+- "Positional Normalization (PONO), which normalizes the activations at each position independently across the channels"
+
+![figure 2](/figures/2019-07_Positional_Normalization_Figure_2.png)
+- "The extracted mean and standard deviation capture the coarse structural information of an input image (see Figure 1). Although removing the first two moments does benefit training, it also eliminates important information about the image, which — in the case of a generative model—would have to be painfully relearned in the decoder. Instead, we propose to bypass and inject the two moments into a later layer of the network, which we refer to as Moment Shortcut (MS) connection."
+    - u-net. "Instead of connecting all channels, we only “fast-forward” the positional moment information $\mu$ and $\sigma$ extracted from earlier layers. We refer to this approach as Moment Shortcut (MS)."
+    - "Importantly, the mean is added in the [decoder], and the std is multiplied,similar to ($\beta$, $\gamma$) in the standard BN layer"
+- "Dynamic Moment Shortcut (DMS): instead of reinjecting $\mu$ and $\sigma$ as is, we use a convolutional neural network that takes $\mu$ and $\sigma$ as inputs to generate $\beta$ and $\gamma$ for MS."
+
+**Takeaways**
+- Positional Normalization (PONO) and Moment Shortcut (MS). Normalize positions and inject the mean and stand deviation back into the network.
 
 ## 2016-11 Categorical Reparameterization with Gumbel-Softmax
 - [paperswithcode](https://paperswithcode.com/method/gumbel-softmax)
@@ -6,7 +27,6 @@
 - "For learning, there is a tradeoff between small temperatures, where samples are close to one-hot but the variance of the gradients is large, and large temperatures, where samples are smooth but the variance of the gradients is small (Figure 1). In practice, we start at a high temperature and anneal to a small but non-zero temperature."
 - "If T is a learned parameter (rather than annealed via a fixed schedule), this scheme can be interpreted as entropy regularization (Szegedy et al., 2015; Pereyra et al., 2016), where the Gumbel-Softmax distribution can adaptively adjust the “confidence” of proposed samples during the training process."
 - Straight-Through (ST) Gumbel Estimator "we discretize y using argmax but use our continuous approximation in the backward pass by approximating"
-
 
 ## 2018-09 Adaptive Input Representations for Neural Language Modeling
 - [paperswithcode](https://paperswithcode.com/paper/adaptive-input-representations-for-neural)
@@ -55,7 +75,6 @@
 - adaptive softmax tied is the best, don't tie the projections in the head or tail
     - added dropout after the projection the tail, to the head, better for small datasets
 - reduce the capacity of the embeddings for small datasets
-
 
 ## 2017-06 Efficient softmax approximation for GPUs
 - [paperswithcode](https://paperswithcode.com/paper/efficient-softmax-approximation-for-gpus)
