@@ -1,3 +1,6 @@
+| Paper | Takeaways |
+| :--- | :--- |
+| Finding a needle in Haystack Facebook’s photo storage | read, write, and delete. keep the index in memory. update asynchronously. use compaction to free up space. |
 
 ## Finding a needle in Haystack Facebook’s photo storage
 - "We carefully reduce this per photo metadata so that Haystack storage machines can perform all metadata lookups in main memory. This choice conserves disk operations for reading actual data and thus increases overall throughput."

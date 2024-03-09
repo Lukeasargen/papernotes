@@ -1,3 +1,17 @@
+| Paper | Takeaways |
+| :--- | :--- |
+|2019-08 Adaptively Sparse Transformers | Softmax can't output zero. Create a softmax with learnable sparsity. Less throughput from computational overhead. This work is focused on showing the mechanisms can work. The only metrics reported are in Table 1 and there is no discernible advantage to this method. |
+| 2019-09 Reducing Transformer Depth on Demand with Structured Dropout | Use LayerDrop if you intend to do layerwise structured pruning. |
+| 2019-09 Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism | "model parallelism with only a few modifications" "careful attention to the placement of layer normalization in BERT-like models is critical to achieving increased accuracies as the model size increases" |
+| 2016-10 BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding | Bidirectional context is key for certain tasks. Masked Language Model (MLM) for pre-training. Then you finetune to perform many tasks. |
+| 2019-01 Transformer-XL Attentive Language Models Beyond a Fixed-Length Context | Cache previous hidden states/memory; adds RNN like structure to the model. Memory length can be extended during evaluation. Relative positions encodings. Reparametrize so that the QK relations are separated into content and position biases. Use sinusoid relative embeddings to extend context beyond training length. |
+| 2019-05 Adaptive Attention Span in Transformers | Learning the attention span does not degrade performance. Reduce memory and compute costs. |
+| 2019-11 Improving Transformer Models by Reordering their Sublayers | The search did not favor MSA or FFN over the other. Use MSA first and FFN later. |
+| 2020-09 Pay Attention when Required | Train a "Supernet" for the architecture search. Linear search time for number of architecture components in each stage. MSA is best in the early layers. |
+| 2018-04 Training Tips for the Transformer Model | Use a bigger model. Use the largest batch size possible |
+| 2020-12 MiniLMv2: Multi-Head Self-Attention Relation Distillation for Compressing Pretrained Transformers | Distill the Q-Q, K-K, V-V relations of only ONE teacher layer into the last layer of a student model. Concatenate the QKV projections and split into multiple relation heads. Calculate the scaled dot product. Use the KL loss. |
+| 2020-02 MiniLM: Deep Self-Attention Distillation for Task-Agnostic Compression of Pre-Trained Transformers | BERT based. WordPiece tokenizer. Sum embeddings at input only. Distill last attention layer only. minimize KL on QK attention maps and value dot product. Models must have same number of heads in the last layer. |
+
 ## 2019-08 Adaptively Sparse Transformers
 - "The softmax mapping (Equation 2) is elementwise proportional to exp, therefore it can never assign a weight of exactly zero. Thus, unnecessary items are still taken into consideration to some extent. Since its output sums to one, this invariably means less weight is assigned to the relevant items, potentially harming performance and interpretability"
 - "We focus on a recently-introduced flexible family of transformations, $\alpha$-entmax"

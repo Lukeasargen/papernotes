@@ -1,3 +1,8 @@
+| Paper | Takeaways |
+| :--- | :--- |
+|2019-08 LXMERT: Learning Cross-Modality Encoder Representations from Transformers | More pretraining tasks empirically improves the validation metrics. However, you have to balance the pretraining task schedules based on the "difficulty" or "complexity" of the tasks. Balance the tasks complexity by starting and stopping the loss based on the lr. |
+| 2020-05 Adaptive Transformers for Learning Multimodal Representations | These shallower networks are not as resilient to LayerDrop as deep networks. Adaptive span and adpative sparsity can work together. However, it seems that adaptave span works best with dense attention. Text can handle more sparsity than images. Images tended towards dense attention. |
+
 ## 2019-08 LXMERT: Learning Cross-Modality Encoder Representations from Transformers
 - "multi-modality pre-training allows our model to infer masked features either from the visible elements in the same modality, or from aligned components in the other modality. In this way, it helps build both intra-modality and cross-modality relationships."
 - "word-level sentence embeddings and object-level image embeddings"
