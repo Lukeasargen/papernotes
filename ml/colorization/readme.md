@@ -1,6 +1,6 @@
 | Paper | Takeaways |
 | :--- | :--- |
-| 2022-06 Neural Image Recolorization for Creative Domains | Output is RGB. Step 1 is train a exemplar based generator. Step 2 is learn the color patlette and illumination mapping into the latent space from step 1. |
+| 2022-06 Neural Image Recolorization for Creative Domains | Output is RGB. Step 1 is train a exemplar based generator. Step 2 is learn the color patlette and illumination mapping into the latent space from step 1. content encoder uses positional normalization |
 | 2021-06 Color2Embed Fast Exemplar-Based Image Colorization using Color Embeddings | Use transforms of GT to get Rrgb. Pass Rrgb into color encoder. Content encoder. U-Net like. Decoder has convolution weights modulated like StyleGAN2 |
 | 2018-07 Deep Exemplar-based Colorization | Similarity sub-net to warp the reference colors to be more semantically aligned with the target grayscale. Colorization sub-net (U-net) to predict the ab channels for the target |
 | 2018-03 Image Colorization with Generative Adversarial Networks | Lab color space. U-Net. Leaky-ReLU. "Batch-Norm is not applied on the first layer". Adam beta1=0.5. one sided label smoothing. imbalanced colors in datasets leads to objects colored with the most frequently seen colors. | 
@@ -17,7 +17,7 @@
 - "we condition our palette-based generator on a target illumination color" "we use a differentiable network to predict the illumination"
 
 **Takeaways**
-- Output is RGB. Step 1 is train a exemplar based generator. Step 2 is learn the color patlette and illumination mapping into the latent space from step 1.
+- Output is RGB. Step 1 is train a exemplar based generator. Step 2 is learn the color patlette and illumination mapping into the latent space from step 1. content encoder uses positional normalization
 
 ## 2021-06 Color2Embed Fast Exemplar-Based Image Colorization using Color Embeddings
 - CIE Lab "we directly extract the color embeddings in RGB color space while our reconstruction process is performed in Lab color space"
